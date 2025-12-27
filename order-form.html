@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Order | Sir's 'n' Suits</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .mobile-menu-btn { display: none; position: fixed; top: 15px; left: 15px; z-index: 1000; background: var(--brand-black); color: var(--brand-gold); border: 1px solid var(--brand-gold); border-radius: 4px; padding: 10px; font-size: 1.2em; cursor: pointer; }
+        @media (max-width: 768px) {
+            .mobile-menu-btn { display: block; }
+            .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; position: fixed; z-index: 999; height: 100%; width: 260px; }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { padding: 20px; padding-top: 60px; }
+            .container { padding: 15px !important; }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="dashboard-container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <h1 class="sidebar-logo">Sir<span class="sidebar-n">'s</span> <span class="sidebar-n">'n'</span> Suits</h1>
+                    <span class="sidebar-subtitle">BY GEORGE</span>
+                </div>
+            </div>
+            <p id="user-info">Logged in as: Manager</p>
+            <nav>
+                <a href="manager-dashboard.html">🏠 Current Orders</a>
+                <a href="all-orders.html">📋 All Orders</a>
+                <a href="worker-management.html">👥 Manage Workers</a>
+                <a href="expenses.html">💸 Expenses</a>
+                <a href="#" id="add-order-btn">➕ New Order</a>
+                <a href="#" id="logout-btn">➡️ Logout</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="container" style="margin: 0 auto;">
+                <h1>New Garment Order</h1>
+                <h2>Enter Customer and Garment Details</h2>
+
+                <form id="order-form">
+                    <fieldset>
+                        <legend>Customer & Garment</legend>
+                        <input type="text" id="customer_name" placeholder="Customer Name (Required)" required>
+                        <input type="tel" id="customer_phone" placeholder="Phone Number (Required)" required>
+                        
+                        <select id="garment-type-select" required onchange="generateMeasurementFieldsManager()">
+                            <option value="">-- Select Garment Type (Required) --</option>
+                            <option value="Suit">Suit</option>
+                            <option value="Kaunda/Senator Suit">Kaunda/Senator Suit</option> <option value="Trouser">Trouser</option>
+                            <option value="Dress">Dress</option>
+                            <option value="Shirt">Shirt</option>
+                            <option value="Coat">Coat</option>
+                            <option value="Half Coat">Half Coat</option>
+                            <option value="Alteration">Alteration</option>
+                        </select>
+                        
+                        <label for="due_date" style="display: block; margin-top: 10px;">Due Date:</label>
+                        <input type="date" id="due_date" required>
+                    </fieldset>
+
+                    <fieldset id="measurement-fieldset" style="display: none;">
+                        <legend>Measurements (Inches)</legend>
+                        <div id="measurement-fields-container"></div>
+                        <textarea id="customer_preferences" placeholder="Customer Preferences or Special Notes" rows="3" style="margin-top: 15px;"></textarea>
+                    </fieldset>
+
+                    <fieldset>
+                        <legend>Financials (Ksh)</legend>
+                        <input type="number" id="price" placeholder="Total Price (Required)" step="0.01" min="1" required>
+                        <input type="number" id="deposit_paid" placeholder="Initial Deposit Paid (Optional, default 0)" step="0.01" value="0">
+                    </fieldset>
+
+                    <fieldset>
+                        <legend>Team Assignment</legend>
+                        <label style="font-weight: bold; display:block; margin-bottom:5px;">⭐ Team Lead (Primary)</label>
+                        <select id="worker-select" required style="margin-bottom: 15px;">
+                            <option value="">-- Select Lead Tailor --</option>
+                        </select>
+
+                        <label style="font-weight: bold; color: #666; font-size: 0.9em; display:block; margin-bottom:5px;">👥 Support Squad (Optional)</label>
+                        <div id="squad-selection-container" style="max-height: 150px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; background: #fafafa; border-radius: 4px;">
+                            <p style="font-size: 0.8em; color: #999; text-align: center; margin: 0;">Loading workers...</p>
+                        </div>
+                        <small style="color: #888; display:block; margin-top:5px;">Select assistants for this order.</small>
+                    </fieldset>
+
+                    <button type="submit" id="submit-order-btn">Create Order</button>
+                </form>
+                <button onclick="window.location.href='manager-dashboard.html'" style="margin-top: 10px; background-color: #6c757d;">Cancel & Back to Dashboard</button>
+                <p id="form-message" class="error" style="margin-top: 20px;"></p>
+            </div>
+        </main>
+    </div>
+    <nav class="bottom-nav">
+        <a href="manager-dashboard.html" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="all-orders.html" class="nav-item">
+            <i class="fas fa-list-ul"></i>
+            <span>Orders</span>
+        </a>
+        <a href="order-form.html" class="nav-item center-fab active">
+            <div class="fab-circle">
+                <i class="fas fa-plus"></i>
+            </div>
+        </a>
+        <a href="worker-management.html" class="nav-item">
+            <i class="fas fa-users"></i>
+            <span>Team</span>
+        </a>
+        <a href="expenses.html" class="nav-item">
+            <i class="fas fa-coins"></i>
+            <span>Expense</span>
+        </a>
+    </nav>
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+    <script src="mobile-nav.js"></script>
+</body>
+</html>

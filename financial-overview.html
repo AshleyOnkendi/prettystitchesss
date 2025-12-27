@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Overview | Admin</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Enforce Montserrat Globally */
+        body, .main-content {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* --- Custom Grid Layouts --- */
+        .analytics-dashboard {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        /* Control Panel */
+        .control-panel {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 3px solid var(--brand-gold);
+        }
+
+        .control-group {
+            flex: 1;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            min-width: 300px;
+        }
+
+        .control-group label {
+            font-size: 0.75em;
+            font-weight: 700;
+            color: #666;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .control-group input, .control-group select {
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 0.9em;
+            background: #fafafa;
+        }
+        
+        .control-panel > button {
+            padding: 10px 20px !important;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .kpi-card {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border-left: 4px solid transparent;
+            transition: transform 0.2s;
+        }
+        
+        .kpi-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .kpi-card.revenue { border-left-color: var(--brand-gold); }
+        .kpi-card.orders { border-left-color: #3b82f6; }
+        .kpi-card.value { border-left-color: #10b981; }
+
+        .kpi-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: #666;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .kpi-value {
+            font-size: 2em;
+            font-weight: 800;
+            color: var(--brand-black);
+            margin-bottom: 5px;
+        }
+
+        .kpi-subtext {
+            font-size: 0.8em;
+            color: #888;
+        }
+
+        /* Charts Area */
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            height: 350px;
+            position: relative;
+        }
+
+        .chart-container h3 {
+            margin: 0 0 20px 0;
+            font-size: 1em;
+            color: #333;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn { display: block; }
+            .control-panel { 
+                flex-direction: column; 
+                align-items: stretch; 
+                gap: 12px;
+            }
+            .control-panel > button {
+                width: 100%;
+                justify-content: center;
+            }
+            .chart-grid { grid-template-columns: 1fr; }
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { padding: 20px; padding-top: 60px; }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="dashboard-container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <h1 class="sidebar-logo">Loading...</h1>
+                    <span class="sidebar-subtitle">...</span>
+                </div>
+            </div>
+            
+            <p id="user-info">Logged in as: Owner</p>
+            <nav>
+                <a href="admin-dashboard.html">👑 Admin Dashboard</a>
+                <a href="admin-current-orders.html">🌍 Global Active Orders</a>
+                <a href="admin-all-orders.html">📂 Global Order History</a>
+                <a href="financial-overview.html" class="active">📈 Financial Overview</a>
+                <a href="admin-management.html">⚙️ Management & Setup</a>
+                <a href="#" id="logout-btn">➡️ Logout</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                <div>
+                    <h1 style="font-family: 'Playfair Display', serif; margin: 0; color: var(--brand-black);">Financial Overview</h1>
+                    <p style="margin: 5px 0 0 0; color: #666; font-size: 0.9em;">Real-time financial tracking and operational auditing.</p>
+                </div>
+                <button onclick="loadAnalyticsDashboard()" title="Refresh Data" 
+                        style="background: transparent; border: 1px solid #ccc; color: #333; padding: 8px 12px; border-radius: 4px; cursor: pointer; transition: all 0.2s;">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </header>
+
+            <div class="analytics-dashboard">
+                <section class="control-panel">
+                    <div class="control-group">
+                        <label><i class="fas fa-calendar-alt"></i> Analysis Period</label>
+                        <input type="text" id="date-range-filter" placeholder="Select dates...">
+                    </div>
+                    
+                    <button onclick="exportDashboardData()" title="Export dashboard data" style="background: var(--brand-black); color: var(--brand-gold); border: 1px solid var(--brand-gold); border-radius: 4px; font-weight: 600; cursor: pointer; white-space: nowrap;">
+                        <i class="fas fa-file-export"></i> Export Report
+                    </button>
+                </section>
+
+                <section class="kpi-grid" id="kpi-metrics">
+                    <div class="kpi-card revenue">
+                        <div class="kpi-header">
+                            <i class="fas fa-coins" style="color: var(--brand-gold);"></i> Total Revenue
+                        </div>
+                        <div class="kpi-value" id="total-revenue">Loading...</div>
+                        <div class="kpi-subtext">Total cash collected (All time)</div>
+                    </div>
+                    
+                    <div class="kpi-card orders">
+                        <div class="kpi-header">
+                            <i class="fas fa-tshirt" style="color: #3b82f6;"></i> Active Workload
+                        </div>
+                        <div class="kpi-value" id="active-orders">0</div>
+                        <div class="kpi-subtext">Orders in production (Status 1-5)</div>
+                    </div>
+                    
+                    <div class="kpi-card value">
+                        <div class="kpi-header">
+                            <i class="fas fa-receipt" style="color: #10b981;"></i> Avg. Order Value
+                        </div>
+                        <div class="kpi-value" id="avg-order-value">0</div>
+                        <div class="kpi-subtext">Average spend per customer</div>
+                    </div>
+                </section>
+
+                <section class="chart-grid">
+                    <div class="chart-container">
+                        <h3><i class="fas fa-chart-line" style="color: #666;"></i> Revenue Trend</h3>
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <h3><i class="fas fa-chart-pie" style="color: #666;"></i> Product Mix (Revenue Share)</h3>
+                        <canvas id="productMixChart"></canvas>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <h3><i class="fas fa-money-bill-wave" style="color: #666;"></i> Top Expenses</h3>
+                        <canvas id="expenseChart"></canvas>
+                    </div>
+
+                    <div class="chart-container">
+                        <h3><i class="fas fa-chart-bar" style="color: #3b82f6;"></i> Shop Performance Comparison</h3>
+                        <canvas id="shopPerformanceChart"></canvas>
+                    </div>
+                </section>
+
+                <section class="chart-grid" style="grid-template-columns: 1fr;">
+                    <div class="chart-container" style="height: auto; max-height: 400px; overflow-y: auto;">
+                        <h3><i class="fas fa-medal" style="color: var(--brand-gold);"></i> Top Performing Products</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th style="text-align: right;">Count</th>
+                                    <th style="text-align: right;">Revenue</th>
+                                </tr>
+                            </thead>
+                            <tbody id="top-products-table">
+                                <tr><td colspan="3" style="text-align: center; padding: 20px;">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section class="chart-container" style="height: auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px;">
+                        <h3 style="margin: 0; border: none; padding: 0;"><i class="fas fa-list-ul"></i> Detailed Expense Audit Log</h3>
+                        <span style="font-size: 0.8em; color: #888;">Real-time Record</span>
+                    </div>
+                    
+                    <div style="max-height: 350px; overflow-y: auto;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.9em;">
+                            <thead style="position: sticky; top: 0; background: #f8f9fa; z-index: 1;">
+                                <tr>
+                                    <th style="padding: 12px; text-align: left; color: #555;">Date</th>
+                                    <th style="padding: 12px; text-align: left; color: #555;">Shop</th>
+                                    <th style="padding: 12px; text-align: left; color: #555;">Category</th>
+                                    <th style="padding: 12px; text-align: right; color: #555;">Amount</th>
+                                    <th style="padding: 12px; text-align: left; color: #555;">Details</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expense-audit-tbody">
+                                <tr><td colspan="5" style="text-align: center; padding: 30px; color: #666;">Loading live expense data...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="admin-dashboard.html" class="nav-item">
+            <i class="fas fa-chart-line"></i>
+            <span>Dash</span>
+        </a>
+        <a href="admin-current-orders.html" class="nav-item">
+            <i class="fas fa-globe"></i>
+            <span>Active</span>
+        </a>
+        <a href="admin-order-form.html" class="nav-item center-fab">
+            <div class="fab-circle">
+                <i class="fas fa-plus"></i>
+            </div>
+        </a>
+        <a href="financial-overview.html" class="nav-item active">
+            <i class="fas fa-wallet"></i>
+            <span>Finance</span>
+        </a>
+        <a href="admin-management.html" class="nav-item">
+            <i class="fas fa-cogs"></i>
+            <span>Setup</span>
+        </a>
+    </nav>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+    <script src="mobile-nav.js"></script>
+    
+    <script>
+        // Init Date Picker and Dropdowns
+        $(document).ready(function() {
+            // Setup Date Picker
+            $('#date-range-filter').daterangepicker({
+                opens: 'left',
+                ranges: {
+                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                    'This Month': [moment().startOf('month'), moment().endOf('month')],
+                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                },
+                startDate: moment().subtract(29, 'days'),
+                endDate: moment(),
+                locale: { format: 'MMM D, YYYY' }
+            }, function(start, end, label) {
+                // Pass dates to app.js function if it exists
+                if(typeof loadAnalyticsDashboard === 'function') {
+                    // We let app.js handle the reload based on these dates
+                    // (The function reads the input value automatically)
+                    loadAnalyticsDashboard();
+                }
+            });
+            
+            // Log for debugging
+            if(typeof APP_CONFIG !== 'undefined') {
+                console.log("✅ Financial Overview: Config Loaded Successfully for " + APP_CONFIG.appName);
+            } else {
+                console.error("❌ Financial Overview: Config Missing!");
+            }
+        });
+    </script>
+</body>
+</html>

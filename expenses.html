@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expenses | Sir's 'n' Suits</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1000;
+            background: var(--brand-black);
+            color: var(--brand-gold);
+            border: 1px solid var(--brand-gold);
+            border-radius: 4px;
+            padding: 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                position: fixed;
+                z-index: 999;
+                height: 100%;
+                width: 260px;
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                padding: 20px;
+                padding-top: 60px;
+            }
+            
+            #expense-form {
+                flex-direction: column;
+            }
+            
+            #expense-form > div {
+                width: 100%;
+                min-width: 100% !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="dashboard-container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <h1 class="sidebar-logo">Sir<span class="sidebar-n">'s</span> <span class="sidebar-n">'n'</span> Suits</h1>
+                    <span class="sidebar-subtitle">BY GEORGE</span>
+                </div>
+            </div>
+            
+            <p id="user-info">Logged in as: Manager</p>
+            <nav>
+                <a href="manager-dashboard.html">🏠 Current Orders</a>
+                <a href="all-orders.html">📋 All Orders</a>
+                <a href="worker-management.html">👥 Manage Workers</a>
+                <a href="expenses.html" class="active">💸 Expenses</a>
+                <a href="#" id="add-order-btn">➕ New Order</a>
+                <a href="#" id="logout-btn">➡️ Logout</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header>
+                <h1>Shop Expenses</h1>
+            </header>
+            
+            <div class="container" style="margin:0; max-width:100%;">
+                <h3>Record New Expense</h3>
+                <form id="expense-form" style="display:flex; flex-wrap: wrap; gap:10px; align-items: flex-end;">
+                    <div style="flex: 1; min-width: 150px;">
+                        <label style="font-size: 0.8em; font-weight: bold;">Category *</label>
+                        <select id="ex-cat" required style="margin-bottom: 0;">
+                            <option value="">-- Select Category --</option>
+                            <option value="Fabrics/Materials">Fabrics & Materials</option>
+                            <option value="Haberdashery">Threads/Buttons/Zippers</option>
+                            <option value="Wages">Fundi Wages/Labor</option>
+                            <option value="Transport">Transport (Matatu/Boda)</option>
+                            <option value="Utilities">Electricity (Stima)/Water</option>
+                            <option value="Rent">Shop Rent</option>
+                            <option value="Food">Staff Tea/Lunch</option>
+                            <option value="Airtime">Airtime/Data</option>
+                            <option value="Repairs">Machine Repairs</option>
+                            <option value="Misc">Miscellaneous</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1; min-width: 150px;">
+                        <label style="font-size: 0.8em; font-weight: bold;">Amount (Ksh) *</label>
+                        <input type="number" id="ex-amount" placeholder="e.g. 500" required style="margin-bottom: 0;">
+                    </div>
+                    <div style="flex: 2; min-width: 200px;">
+                        <label style="font-size: 0.8em; font-weight: bold;">Item Name / Details (Optional)</label>
+                        <input type="text" id="ex-name" placeholder="e.g. 2 meters lining" style="margin-bottom: 0;">
+                    </div>
+                    <div style="flex: 2; min-width: 200px;">
+                        <label style="font-size: 0.8em; font-weight: bold;">Notes (Optional)</label>
+                        <input type="text" id="ex-notes" placeholder="Any extra details..." style="margin-bottom: 0;">
+                    </div>
+                    <button type="submit" style="width:auto; padding: 12px 25px; margin-bottom: 0;">Save Expense</button>
+                </form>
+            </div>
+
+            <h3 style="margin-top: 30px;">Expense History</h3>
+            <div id="orders-table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Category</th>
+                            <th>Item/Details</th>
+                            <th>Amount (Ksh)</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expenses-tbody">
+                        <tr><td colspan="5">Loading expenses...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    <nav class="bottom-nav">
+        <a href="manager-dashboard.html" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="all-orders.html" class="nav-item">
+            <i class="fas fa-list-ul"></i>
+            <span>List</span>
+        </a>
+        <a href="order-form.html" class="nav-item center-fab">
+            <div class="fab-circle">
+                <i class="fas fa-plus"></i>
+            </div>
+        </a>
+        <a href="worker-management.html" class="nav-item">
+            <i class="fas fa-users"></i>
+            <span>Team</span>
+        </a>
+        <a href="expenses.html" class="nav-item active">
+            <i class="fas fa-coins"></i>
+            <span>Costs</span>
+        </a>
+    </nav>
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+    <script src="mobile-nav.js"></script>
+</body>
+</html>

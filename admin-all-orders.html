@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin All Orders | Sir's 'n' Suits</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1000;
+            background: var(--brand-black);
+            color: var(--brand-gold);
+            border: 1px solid var(--brand-gold);
+            border-radius: 4px;
+            padding: 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                position: fixed;
+                z-index: 999;
+                height: 100%;
+                width: 260px;
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                padding: 20px;
+                padding-top: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="dashboard-container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <h1 class="sidebar-logo">Sir<span class="sidebar-n">'s</span> <span class="sidebar-n">'n'</span> Suits</h1>
+                    <span class="sidebar-subtitle">BY GEORGE</span>
+                </div>
+            </div>
+            
+            <p id="user-info">Logged in as: Owner</p>
+            <nav>
+                <a href="admin-dashboard.html">👑 Admin Dashboard (Pending)</a>
+                <a href="admin-current-orders.html">🌍 Global Active Orders</a>
+                <a href="admin-all-orders.html" class="active">📂 Global Order History</a>
+                <a href="financial-overview.html">📈 Financial Overview</a>
+                <a href="admin-management.html">⚙️ Management & Setup</a>
+                
+                <a href="admin-order-form.html" class="nav-cta">➕ New Global Order</a>
+                
+                <a href="#" id="logout-btn">➡️ Logout</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h1>Global Order History (All Statuses)</h1>
+                        <p>View all past and current orders across all shops, including closed ones (Status 6).</p>
+                    </div>
+                    <button onclick="loadAdminOrders('all')" title="Refresh Data" 
+                            style="background: transparent; border: 1px solid #ccc; color: #333; padding: 8px 12px; border-radius: 4px; cursor: pointer;">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+
+            <div class="filter-bar" style="display: flex; gap: 10px; margin-bottom: 20px;">
+                 <!-- Shop Filter -->
+                <select id="admin-shop-filter" style="width: 250px;">
+                    <option value="">Filter by Shop (All)</option>
+                    <!-- Shops populated by JS -->
+                </select>
+                <!-- Status Filter -->
+                <select id="admin-status-filter" style="width: 250px;">
+                    <option value="">Filter by Status (All)</option>
+                    <option value="1">1. Assigned</option>
+                    <option value="2">2. In Progress</option>
+                    <option value="3">3. QA Check</option>
+                    <option value="4">4. Ready</option>
+                    <option value="5">5. Collected/Pending</option>
+                    <option value="6">6. Closed</option>
+                </select>
+                <button onclick="loadAdminOrders('all')">Apply Filters</button>
+            </div>
+
+            <section class="order-list">
+                <div id="orders-table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Shop</th>
+                                <th>Customer</th>
+                                <th>Garment</th>
+                                <th>Due Date</th>
+                                <th>Worker</th>
+                                <th>Status</th>
+                                <th>Balance Due</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-orders-tbody">
+                            <tr><td colspan="9">Loading all orders...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- ORDER VIEW MODAL (For View Button) -->
+    <div id="order-modal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <!-- Content will be injected by JavaScript -->
+        </div>
+    </div>
+
+    <a href="#" class="top-logout-btn" onclick="handleLogout()">
+        <i class="fas fa-power-off"></i>
+    </a>
+    <nav class="bottom-nav">
+        <a href="admin-dashboard.html" class="nav-item">
+            <i class="fas fa-chart-pie"></i>
+            <span>Dash</span>
+        </a>
+        <a href="admin-current-orders.html" class="nav-item">
+            <i class="fas fa-bolt"></i>
+            <span>Active</span>
+        </a>
+        <a href="admin-order-form.html" class="nav-item center-fab">
+            <div class="fab-circle">
+                <i class="fas fa-plus"></i>
+            </div>
+        </a>
+        <a href="admin-all-orders.html" class="nav-item active">
+            <i class="fas fa-history"></i>
+            <span>History</span>
+        </a>
+        <a href="admin-management.html" class="nav-item">
+            <i class="fas fa-cogs"></i>
+            <span>Setup</span>
+        </a>
+    </nav>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+    <script src="mobile-nav.js"></script>
+</body>
+</html>

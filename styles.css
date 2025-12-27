@@ -1,0 +1,793 @@
+/* --- Brand Fonts --- */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
+
+:root {
+    /* --- The Royal Palette --- */
+    --brand-black: #121212;
+    --brand-gold: #D4AF37;
+    --brand-gold-light: #f4e5bc;
+    --brand-white: #ffffff;
+    --bg-light: #f4f6f8;
+    
+    /* --- Functional Colors --- */
+    --profit-green: #2ecc71; /* Fresh crisp green for money in */
+    --balance-red: #e74c3c;  /* Alert red for money owed */
+    --royal-blue: #0d1b2a;   /* Deep professional blue */
+    --text-dark: #2c3e50;
+    --text-light: #95a5a6;
+}
+
+/* --- Base Reset & Typography --- */
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    margin: 0;
+    display: flex;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* --- Layout --- */
+.dashboard-container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    position: relative;
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 40px;
+    overflow-y: auto;
+    background: linear-gradient(to bottom right, #f4f6f8, #e9ecef);
+    transition: all 0.3s ease;
+}
+
+/* --- Sidebar (The Luxury Panel) - FIXED --- */
+.sidebar {
+    width: 260px;
+    background-color: var(--brand-black);
+    color: var(--brand-white);
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    box-shadow: 5px 0 15px rgba(0,0,0,0.2);
+    border-right: 3px solid var(--brand-gold);
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 100;
+}
+
+/* --- LOGO STYLING (Sir's 'n' Suits BY GEORGE) --- */
+.sidebar-header {
+    text-align: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+    padding: 20px 15px;
+    flex-shrink: 0;
+}
+
+.logo-container {
+    text-align: center;
+    padding-bottom: 0;
+}
+
+.brand-logo {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 1.8em;
+    color: var(--brand-gold);
+    margin: 0;
+    line-height: 1;
+    letter-spacing: -1px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    text-transform: uppercase;
+}
+
+.brand-subtitle {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    font-size: 0.6em;
+    letter-spacing: 5px;
+    color: var(--brand-white);
+    margin-top: 8px;
+    display: block;
+    text-transform: uppercase;
+}
+
+.sidebar-logo {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 1.6em;
+    color: var(--brand-gold);
+    margin: 0;
+    line-height: 1;
+    letter-spacing: -1px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    text-transform: uppercase;
+}
+
+.sidebar-subtitle {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    font-size: 0.55em;
+    letter-spacing: 4px;
+    color: var(--brand-white);
+    margin-top: 5px;
+    display: block;
+    text-transform: uppercase;
+}
+
+.sidebar-n, .brand-n {
+    font-size: 0.65em;
+    font-style: italic;
+    color: var(--brand-white);
+    text-transform: lowercase;
+}
+
+/* --- User Info --- */
+#user-info {
+    text-align: center;
+    font-size: 0.85em;
+    color: #888;
+    margin: 0 15px 20px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    font-style: italic;
+    flex-shrink: 0;
+}
+
+/* --- Navigation Links - FIXED LAYOUT --- */
+.sidebar nav {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 0 15px;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.sidebar nav a {
+    color: #ccc;
+    text-decoration: none;
+    padding: 12px 15px;
+    display: block;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    border-left: 3px solid transparent;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sidebar nav a:hover {
+    background-color: rgba(212, 175, 55, 0.1);
+    color: var(--brand-gold);
+    border-left: 3px solid var(--brand-gold);
+    padding-left: 20px;
+    transform: none; /* Removed animation */
+}
+
+.sidebar nav a.active {
+    background-color: rgba(212, 175, 55, 0.15);
+    color: var(--brand-gold);
+    border-left: 3px solid var(--brand-gold);
+    padding-left: 20px;
+    font-weight: 600;
+}
+
+/* Special styling for logout button - ALWAYS VISIBLE AT BOTTOM */
+.sidebar nav a[href*="logout"], 
+.sidebar nav a#logout-btn {
+    margin-top: auto;
+    margin-bottom: 20px;
+    background: rgba(212, 175, 55, 0.1);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    text-align: center;
+    font-weight: 600;
+    color: var(--brand-gold);
+}
+
+.sidebar nav a[href*="logout"]:hover, 
+.sidebar nav a#logout-btn:hover {
+    background: rgba(212, 175, 55, 0.2);
+    border-color: var(--brand-gold);
+}
+
+/* Special styling for New Global Order button */
+.nav-cta {
+    background: rgba(212, 175, 55, 0.1) !important;
+    border: 1px solid var(--brand-gold) !important;
+    color: var(--brand-gold) !important;
+    text-align: center;
+    font-weight: bold;
+    margin-top: 10px !important;
+    margin-bottom: 15px !important;
+}
+
+.nav-cta:hover {
+    background: var(--brand-gold) !important;
+    color: var(--brand-black) !important;
+}
+
+/* --- Buttons (Gold Standard) - SIMPLIFIED --- */
+button {
+    background-color: var(--brand-black);
+    color: var(--brand-gold);
+    border: 1px solid var(--brand-gold);
+    padding: 12px 20px;
+    border-radius: 4px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.85em;
+}
+
+button:hover {
+    background-color: var(--brand-gold);
+    color: var(--brand-black);
+}
+
+.small-btn {
+    padding: 6px 12px;
+    font-size: 0.75em;
+    width: auto;
+    text-transform: none;
+}
+
+/* --- Modal Styles --- */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: white;
+    margin: auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    color: #000;
+}
+
+/* Modal action buttons */
+.modal-content button {
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+/* --- Cards & Containers --- */
+.metric-card, .shop-card, .container, .modal-content {
+    background: var(--brand-white);
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    border-top: 3px solid var(--brand-gold); /* Gold accent on top */
+}
+
+/* --- KPI Boxes --- */
+.stat-box {
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.box-black { background: var(--brand-black); color: var(--brand-gold); border: 1px solid var(--brand-gold); }
+.box-blue { background: var(--royal-blue); }
+.box-green { background: var(--profit-green); }
+.box-red { background: var(--balance-red); }
+
+/* --- Tables --- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+th {
+    background: var(--brand-black);
+    color: var(--brand-gold);
+    padding: 15px;
+    text-align: left;
+    font-family: 'Playfair Display', serif;
+    letter-spacing: 1px;
+}
+td {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    color: #444;
+}
+tr:hover { background-color: #fffcf5; } /* Subtle gold tint on hover */
+
+/* --- Inputs --- */
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fdfdfd;
+    font-family: 'Montserrat', sans-serif;
+    transition: border-color 0.2s;
+}
+input:focus, select:focus {
+    border-color: var(--brand-gold);
+    outline: none;
+    box-shadow: 0 0 5px rgba(212, 175, 55, 0.2);
+}
+
+/* --- Status Indicators --- */
+.status-indicator { 
+    padding: 4px 10px; 
+    border-radius: 20px; 
+    font-size: 0.75em; 
+    font-weight: bold; 
+    color: white; 
+    text-transform: uppercase;
+    display: inline-block;
+}
+.status-1 { background: #7f8c8d; } /* Assigned - Gray */
+.status-2 { background: var(--brand-gold); color: black; } /* In Progress - Gold */
+.status-3 { background: var(--royal-blue); } /* QA - Blue */
+.status-4 { background: var(--profit-green); } /* Ready - Green */
+.status-5 { background: var(--brand-black); border: 1px solid var(--brand-gold); color: var(--brand-gold); } /* Collected - Black/Gold */
+.status-6 { background: #000; } /* Closed */
+
+/* --- Typography Headers --- */
+h1 { 
+    font-family: 'Playfair Display', serif; 
+    color: var(--brand-black); 
+    margin-bottom: 5px; 
+    font-size: 2em;
+}
+h2 { 
+    font-family: 'Playfair Display', serif; 
+    color: var(--brand-gold); 
+    margin-bottom: 15px; 
+    font-size: 1.5em;
+}
+p { line-height: 1.6; }
+
+/* --- Login Container --- */
+.login-container {
+    max-width: 400px;
+    margin: 80px auto;
+    text-align: center;
+    padding: 40px;
+    background: var(--brand-black); /* Black card */
+    color: var(--brand-white);
+    border: 2px solid var(--brand-gold);
+    border-radius: 8px;
+}
+.login-container h1 { color: var(--brand-gold); }
+.login-container h2 { 
+    color: var(--brand-white); 
+    font-family: 'Montserrat', sans-serif; 
+    font-size: 1em; 
+    letter-spacing: 2px; 
+    text-transform: uppercase; 
+    margin-bottom: 30px;
+}
+
+/* Custom Scrollbar for Sidebar */
+.sidebar::-webkit-scrollbar {
+    width: 5px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: var(--brand-gold);
+    border-radius: 10px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: #b8941f;
+}
+
+/* --- 📱 MOBILE BOTTOM DOCK STYLES --- */
+
+/* Default: Hide the bottom nav on Desktop */
+.bottom-nav { display: none; }
+
+/* On Mobile: Hide Sidebar, Show Bottom Nav */
+@media (max-width: 768px) {
+    /* Hide the old sidebar completely */
+    .sidebar { display: none !important; }
+    .mobile-menu-btn { display: none !important; }
+    
+    /* Adjust main content so it doesn't get hidden behind the bar */
+    .main-content {
+        padding: 15px 15px 90px 15px !important; /* Extra padding at bottom */
+        width: 100% !important;
+        margin: 0 !important;
+    }
+
+    /* The Dock Container */
+    .bottom-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 65px;
+        background: #121212; /* Brand Black */
+        border-top: 3px solid #D4AF37; /* Brand Gold */
+        z-index: 9999;
+        justify-content: space-around;
+        align-items: center;
+        box-shadow: 0 -2px 15px rgba(0,0,0,0.5);
+        padding-bottom: env(safe-area-inset-bottom); /* iPhone X safe area */
+    }
+
+    /* The Icons */
+    .nav-item {
+        color: #888;
+        text-decoration: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7em;
+        font-weight: 600;
+        width: 20%; /* 5 items = 20% width each */
+    }
+
+    .nav-item i {
+        font-size: 1.6em;
+        margin-bottom: 4px;
+        color: #aaa;
+        transition: color 0.2s;
+    }
+
+    /* Active State */
+    .nav-item.active i, .nav-item.active span {
+        color: #D4AF37; /* Gold */
+    }
+
+    /* The "New Order" Center Button (Pop-up effect) */
+    .nav-item.center-fab {
+        position: relative;
+        top: -25px; /* Moves it up */
+    }
+    
+    .nav-item.center-fab .fab-circle {
+        width: 55px;
+        height: 55px;
+        background: #D4AF37;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 5px solid #121212; /* Black border to blend with bg */
+        box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+    }
+    
+    .nav-item.center-fab i {
+        color: #000;
+        margin: 0;
+        font-size: 1.8em;
+    }
+}
+
+/* ============================================ */
+/* MOBILE RESPONSIVE DESIGN (Tablet & Phone) */
+/* ============================================ */
+
+@media (max-width: 1024px) {
+    .main-content {
+        padding: 30px;
+    }
+    
+    .metrics-bar {
+        flex-wrap: wrap;
+    }
+    
+    .metric-card {
+        min-width: calc(50% - 10px);
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Stack layout vertically */
+    .dashboard-container {
+        flex-direction: column;
+    }
+    
+    /* Sidebar becomes sliding drawer - FIXED */
+    .sidebar {
+        position: fixed;
+        z-index: 999;
+        height: 100%;
+        width: 280px;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        padding-top: 60px;
+    }
+    
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        padding: 20px;
+        padding-top: 60px; /* Space for hamburger button */
+        width: 100%;
+    }
+    
+    /* Mobile hamburger button */
+    .mobile-menu-btn {
+        display: block;
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 1000;
+        background: var(--brand-black);
+        color: var(--brand-gold);
+        border: 1px solid var(--brand-gold);
+        border-radius: 4px;
+        padding: 10px;
+        font-size: 1.2em;
+        cursor: pointer;
+    }
+    
+    /* Overlay for mobile sidebar */
+    .sidebar::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+    }
+    
+    .sidebar.active::after {
+        display: block;
+    }
+    
+    /* Mobile-friendly tables */
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+        font-size: 0.9em;
+    }
+    
+    th, td {
+        padding: 10px;
+        min-width: 120px; /* Prevent columns from collapsing */
+    }
+    
+    /* Stack metrics cards */
+    .metrics-bar {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .metric-card {
+        width: 100%;
+        min-width: 100%;
+    }
+    
+    /* Adjust filter bars */
+    .filter-bar {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .filter-bar select,
+    .filter-bar button {
+        width: 100%;
+    }
+    
+    /* Adjust form layouts */
+    form fieldset {
+        padding: 15px;
+    }
+    
+    /* Make buttons larger for touch */
+    button {
+        padding: 15px;
+        font-size: 1em;
+    }
+    
+    .small-btn {
+        padding: 8px 15px;
+        font-size: 0.9em;
+    }
+    
+    /* Adjust modal for mobile */
+    .modal-content {
+        width: 90%;
+        margin: 10% auto;
+        padding: 20px;
+    }
+    
+    /* Login container adjustments */
+    .login-container {
+        margin: 40px auto;
+        width: 90%;
+        padding: 30px 20px;
+    }
+    
+    /* Logo adjustments for mobile */
+    .sidebar-logo {
+        font-size: 1.4em;
+    }
+    
+    .sidebar-subtitle {
+        font-size: 0.45em;
+        letter-spacing: 3px;
+    }
+    
+    .brand-logo {
+        font-size: 1.6em;
+    }
+    
+    .brand-subtitle {
+        font-size: 0.45em;
+        letter-spacing: 3px;
+    }
+    
+    /* Improve spacing in order cards */
+    .order-list h2 {
+        font-size: 1.2em;
+    }
+    
+    /* Fix sidebar nav spacing on mobile */
+    .sidebar nav {
+        padding: 0 10px;
+    }
+    
+    .sidebar nav a {
+        padding: 10px 12px;
+        font-size: 0.9em;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        padding: 15px;
+        padding-top: 50px;
+    }
+    
+    h1 {
+        font-size: 1.5em;
+    }
+    
+    h2 {
+        font-size: 1.2em;
+    }
+    
+    /* Further reduce table font size */
+    table {
+        font-size: 0.8em;
+    }
+    
+    th, td {
+        padding: 8px;
+        min-width: 100px;
+    }
+    
+    /* Stack action buttons vertically */
+    .quick-actions-toolbar {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .quick-actions-toolbar button {
+        width: 100%;
+    }
+    
+    /* Form inputs larger on very small screens */
+    input, select, textarea {
+        padding: 14px;
+        font-size: 16px; /* Prevents iOS zoom on focus */
+    }
+    
+    /* Adjust sidebar width for very small screens */
+    .sidebar {
+        width: 250px;
+    }
+    
+    /* Fix logout button on small screens */
+    .sidebar nav a[href*="logout"], 
+    .sidebar nav a#logout-btn {
+        margin-bottom: 15px;
+        padding: 12px;
+    }
+}
+
+/* Animation fixes - Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Print styles */
+@media print {
+    .sidebar, .mobile-menu-btn, .filter-bar, button {
+        display: none !important;
+    }
+    
+    .main-content {
+        width: 100%;
+        padding: 0;
+    }
+}
+
+/* [Change 6] Elegant Table Action Buttons */
+.table-btn {
+    background: transparent;
+    border: 1px solid #ddd;
+    color: #333;
+    padding: 6px 12px;
+    font-size: 0.85em;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.table-btn:hover {
+    background: var(--brand-black);
+    color: var(--brand-white);
+    border-color: var(--brand-black);
+}
+
+/* Specific override for receipt if needed, or keep generic */
+.table-btn-receipt {
+    margin-left: 5px;
+}

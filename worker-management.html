@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worker Management | Sir's 'n' Suits</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1000;
+            background: var(--brand-black);
+            color: var(--brand-gold);
+            border: 1px solid var(--brand-gold);
+            border-radius: 4px;
+            padding: 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                position: fixed;
+                z-index: 999;
+                height: 100%;
+                width: 260px;
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                padding: 20px;
+                padding-top: 60px;
+            }
+            
+            #add-worker-form {
+                flex-direction: column;
+            }
+            
+            #worker-search {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="dashboard-container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <h1 class="sidebar-logo">Sir<span class="sidebar-n">'s</span> <span class="sidebar-n">'n'</span> Suits</h1>
+                    <span class="sidebar-subtitle">BY GEORGE</span>
+                </div>
+            </div>
+            
+            <p id="user-info">Logged in as: Manager</p>
+            <nav>
+                <a href="manager-dashboard.html">🏠 Current Orders</a>
+                <a href="all-orders.html">📋 All Orders</a>
+                <a href="worker-management.html" class="active">👥 Manage Workers</a>
+                <a href="expenses.html">💸 Expenses</a>
+                <a href="#" id="add-order-btn">➕ New Order</a>
+                <a href="#" id="logout-btn">➡️ Logout</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header>
+                <h1>Worker Management</h1>
+            </header>
+
+            <!-- Add Worker Section -->
+            <section style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 30px;">
+                <h3 style="margin-top: 0;">Add New Staff</h3>
+                <form id="add-worker-form" style="display: flex; gap: 10px; align-items: center;">
+                    <input type="text" id="new-worker-name" placeholder="Name" required style="flex: 2; margin: 0;">
+                    <input type="tel" id="new-worker-phone" placeholder="Phone" style="flex: 1; margin: 0;">
+                    <button type="submit" style="width: auto; padding: 10px 20px; margin: 0;">+ Add</button>
+                </form>
+                <p id="worker-message" class="error" style="margin-top: 10px;"></p>
+            </section>
+            
+            <!-- Worker List Section -->
+            <section>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h2>Team Overview</h2>
+                    <input type="text" id="worker-search" placeholder="Search by name..." style="width: 250px; margin: 0; padding: 8px;">
+                </div>
+
+                <div id="orders-table-container"> <!-- Reusing table container style -->
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Contact</th>
+                                <th>Pending Orders</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="worker-list-tbody">
+                            <tr><td colspan="4">Loading workers...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Edit Worker Modal -->
+    <div id="edit-worker-modal" class="modal">
+        <div class="modal-content" style="max-width: 400px; padding: 20px;">
+            <span class="close-btn" onclick="document.getElementById('edit-worker-modal').style.display='none'">&times;</span>
+            <h2>Edit Worker</h2>
+            <input type="hidden" id="edit-worker-id">
+            <label>Name</label>
+            <input type="text" id="edit-worker-name">
+            <label>Phone</label>
+            <input type="text" id="edit-worker-phone">
+            <button onclick="saveWorkerEdits()" style="margin-top: 10px;">Save Changes</button>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="manager-dashboard.html" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="all-orders.html" class="nav-item">
+            <i class="fas fa-list-ul"></i>
+            <span>List</span>
+        </a>
+        <a href="order-form.html" class="nav-item center-fab">
+            <div class="fab-circle">
+                <i class="fas fa-plus"></i>
+            </div>
+        </a>
+        <a href="worker-management.html" class="nav-item active">
+            <i class="fas fa-users"></i>
+            <span>Team</span>
+        </a>
+        <a href="expenses.html" class="nav-item">
+            <i class="fas fa-coins"></i>
+            <span>Costs</span>
+        </a>
+    </nav>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+    <script src="mobile-nav.js"></script>
+</body>
+</html>

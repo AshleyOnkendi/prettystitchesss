@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | System Access</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body style="background-color: #0d0d0d; display: flex; align-items: center; justify-content: center;">
+    
+    <div class="login-container">
+        <div class="logo-container" style="border-bottom: none; padding-bottom: 0;">
+            <h1 class="brand-logo" id="dynamic-login-name" style="font-size: 1.8em; margin-bottom: 5px;">PRETTY STITCHES</h1>
+            <span class="brand-subtitle" id="dynamic-login-subtitle" style="display: block; font-size: 0.8em; letter-spacing: 3px; color: var(--brand-gold);">BY RONNY</span>
+        </div>
+
+        <h2 style="color: var(--brand-white); font-family: 'Montserrat', sans-serif; font-size: 1em; letter-spacing: 2px; text-transform: uppercase; margin: 30px 0;">System Access</h2>
+        
+        <form id="auth-form">
+            <input type="email" id="email" placeholder="Email Address" required style="background: #222; border: 1px solid #444; color: #fff;">
+            <input type="password" id="password" placeholder="Password" required style="background: #222; border: 1px solid #444; color: #fff;">
+            <button type="submit" id="login-button" style="width: 100%; margin-top: 10px; background: var(--brand-gold); color: var(--brand-black);">Sign In</button>
+        </form>
+        <p id="auth-message" class="error"></p>
+        <p style="margin-top: 20px; font-size: 0.7em; color: #666;">Authorized Personnel Only</p>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
